@@ -1,12 +1,20 @@
 action :write do
   execute "#{new_resource.description} - #{new_resource.domain} - #{new_resource.key}"  do
-    command "defaults write #{new_resource.domain} #{new_resource.key} #{type_flag} #{value}"
+    command "defaults write #{new_resource.domain} #{new_resource.key} #{type_flag} '#{value}'"
     user WS_USER
     not_if "defaults read #{new_resource.domain} #{new_resource.key} | grep ^#{value}$"
   end
 end
+action :delete do
+  execute "#{new_resource.description} - #{new_resource.domain}"  do
+    command "defaults delete #{new_resource.domain} #{new_resource.key}"
+    user WS_USER
+    only_if "defaults read #{new_resource.domain} #{new_resource.key}"
+  end
+end
 
 def type_flag
+  return '-array' if new_resource.array
   return '-int' if new_resource.integer
   return '-string' if new_resource.string
   return '-float' if new_resource.float
@@ -15,7 +23,8 @@ def type_flag
 end
 
 def value
-  new_resource.integer ||
+  (new_resource.array && new_resource.array.join("' '")) ||
+    new_resource.integer ||
     new_resource.string ||
     (new_resource.float && new_resource.float.to_f) ||
     new_resource.boolean
