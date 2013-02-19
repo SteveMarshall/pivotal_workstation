@@ -6,7 +6,7 @@ unless File.exists?("#{node["things"]["destination"]}/Things.app")
   end
 
   execute "unzip Things" do
-    command "unzip #{Chef::Config[:file_cache_path]}/Things.zip -d #{Regexp.escape("#{node["things"]["destination"]}/"
+    command "unzip #{Chef::Config[:file_cache_path]}/Things.zip -d #{Regexp.escape(node["things"]["destination"])}"
     user WS_USER
   end
 
