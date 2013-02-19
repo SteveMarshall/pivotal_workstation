@@ -1,15 +1,15 @@
 action :write do
   execute "#{new_resource.description} - #{new_resource.domain} - #{new_resource.key}"  do
-    command "defaults write #{new_resource.domain} #{new_resource.key} #{type_flag} '#{value}'"
+    command %Q{defaults write #{new_resource.domain} "#{new_resource.key}" #{type_flag} '#{value}'}
     user WS_USER
-    not_if "defaults read #{new_resource.domain} #{new_resource.key} | grep ^#{value}$"
+    not_if %Q{defaults read #{new_resource.domain} "#{new_resource.key}" | grep ^#{value}$}, :user => WS_USER
   end
 end
 action :delete do
   execute "#{new_resource.description} - #{new_resource.domain}"  do
-    command "defaults delete #{new_resource.domain} #{new_resource.key}"
+    command %Q{defaults delete #{new_resource.domain} "#{new_resource.key}"}
     user WS_USER
-    only_if "defaults read #{new_resource.domain} #{new_resource.key}"
+    only_if %Q{defaults read #{new_resource.domain} "#{new_resource.key}"}, :user => WS_USER
   end
 end
 
