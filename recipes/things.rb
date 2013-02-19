@@ -6,14 +6,8 @@ unless File.exists?("#{node["things"]["destination"]}/Things.app")
   end
 
   execute "unzip Things" do
-    command "unzip #{Chef::Config[:file_cache_path]}/Things.zip -d #{Chef::Config[:file_cache_path]}/"
+    command "unzip #{Chef::Config[:file_cache_path]}/Things.zip -d #{Regexp.escape("#{node["things"]["destination"]}/"
     user WS_USER
-  end
-
-  execute "copy Things to #{node["things"]["destination"]}" do
-    command "mv #{Chef::Config[:file_cache_path]}/Things.app #{Regexp.escape("#{node["things"]["destination"]}/Things.app")}"
-    user WS_USER
-    group "admin"
   end
 
   ruby_block "test to see if Things.app was installed" do
